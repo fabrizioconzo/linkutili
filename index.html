@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RRR Tools">
+<meta name="theme-color" content="#2c6da2">
+<meta name="description" content="RRR Tools – Strumenti CGN">
+<title>RRR Tools</title>
+<link rel="apple-touch-icon" id="apple-touch-icon-main">
+<link rel="icon" id="favicon-link" type="image/png">
+
+<style>
+  @font-face { font-family:"Roboto"; font-style:normal; font-weight:300; src:local("Roboto Light"),local("Roboto-Light"); }
+  @font-face { font-family:"Roboto"; font-style:normal; font-weight:400; src:local("Roboto"),local("Roboto-Regular"); }
+  @font-face { font-family:"Roboto"; font-style:normal; font-weight:500; src:local("Roboto Medium"),local("Roboto-Medium"); }
+  @font-face { font-family:"Roboto"; font-style:normal; font-weight:700; src:local("Roboto Bold"),local("Roboto-Bold"); }
+  @font-face { font-family:"Roboto"; font-style:normal; font-weight:900; src:local("Roboto Black"),local("Roboto-Black"); }
+</style>
+
+<style>
+  :root {
+    --brand:       #2c6da2;
+    --brand-dark:  #1f4f78;
+    --brand-light: #5b99c9;
+    --text:        #3b3b3b;
+    --muted:       #7a8d9e;
+    --white:       #ffffff;
+    --surface:     #f5f8fb;
+    --border:      #c5d8ea;
+    --shadow:      0 2px 16px rgba(44,109,162,0.13);
+  }
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html, body { min-height:100%; min-height:-webkit-fill-available; }
+  body {
+    font-family:"Roboto",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:var(--surface);
+    color:var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background:var(--brand);
+    padding:14px 28px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:4px solid var(--brand-light);
+    gap:10px;
+    padding-top:max(14px,env(safe-area-inset-top,14px));
+  }
+  .header-left { display:flex; align-items:center; gap:14px; flex:1; min-width:0; }
+  .header-left-text { min-width:0; }
+  .header-left-text h1 {
+    color:var(--white);
+    font-size:clamp(.88rem,2.4vw,1.2rem);
+    font-weight:700;
+    letter-spacing:.02em;
+    line-height:1.35;
+  }
+  .header-left-text p {
+    color:var(--white);
+    font-size:.73rem;
+    font-weight:300;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-top:3px;
+  }
+  .header-badge {
+    background:rgba(255,255,255,0.15);
+    border-radius:20px;
+    padding:4px 12px;
+    font-size:.68rem;
+    color:var(--white);
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    flex-shrink:0;
+  }
+
+  @media (min-width:480px) {
+    .header { padding:16px 24px 14px !important; border-bottom-width:4px !important; }
+    .header-left { gap:18px !important; }
+    .header-left-text h1 { font-size:20px !important; }
+    .header-left-text p { font-size:10px !important; letter-spacing:2px !important; margin-top:5px !important; }
+  }
+  @media (max-width:375px) {
+    .header { padding:10px 14px 10px; gap:8px; }
+    .header-left { gap:10px; }
+    .header-left-text h1 { font-size:12px; }
+    .header-left-text p { font-size:8px; letter-spacing:1px; }
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:36px 24px 40px;
+    padding-bottom:max(40px,env(safe-area-inset-bottom,40px));
+  }
+  .section-label {
+    width:100%;
+    max-width:560px;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:20px;
+    padding-left:2px;
+  }
+
+  /* ── LINK LIST ── */
+  .link-list {
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    width:100%;
+    max-width:560px;
+  }
+
+  /* ── LINK CARD ── */
+  .link-card {
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    text-decoration:none;
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:16px 20px;
+    box-shadow:var(--shadow);
+    transition:transform .15s ease, box-shadow .15s ease;
+    outline:none;
+  }
+  .link-card:hover {
+    transform:translateY(-2px);
+    box-shadow:0 6px 24px rgba(44,109,162,0.18);
+  }
+  .link-card:active { transform:scale(0.98); opacity:0.85; }
+  .link-card:focus-visible { box-shadow:0 0 0 3px var(--brand-light); }
+
+  .link-title {
+    font-size:.92rem;
+    font-weight:700;
+    color:var(--brand-dark);
+    letter-spacing:.01em;
+    line-height:1.3;
+  }
+  .link-meta {
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .link-label {
+    font-size:.68rem;
+    font-weight:700;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--muted);
+    flex-shrink:0;
+  }
+  .link-url {
+    font-size:.75rem;
+    font-weight:400;
+    color:var(--brand-light);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    letter-spacing:.01em;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width:100%; max-width:560px;
+    height:1px; background:var(--border);
+    margin:32px 0 28px;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align:center;
+    padding:0 16px 24px;
+    padding-bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 16px));
+  }
+  .footer p { font-size:.72rem; color:var(--muted); letter-spacing:.03em; }
+  .footer p + p { margin-top:4px; }
+
+  /* ── iOS INSTALL BANNER ── */
+  #ios-banner {
+    position:fixed; bottom:0; left:0; right:0;
+    background:var(--brand); color:#fff;
+    padding:12px 14px;
+    padding-bottom:max(12px,calc(env(safe-area-inset-bottom,0px) + 10px));
+    display:flex; align-items:center; gap:12px;
+    z-index:9999;
+    box-shadow:0 -2px 20px rgba(0,0,0,.35);
+    font-family:"Roboto",sans-serif;
+  }
+  #ios-banner img { width:42px; height:42px; border-radius:10px; flex-shrink:0; }
+  #ios-banner .banner-text { flex:1; }
+  #ios-banner .banner-text strong { display:block; font-size:13px; font-weight:700; }
+  #ios-banner .banner-text span { font-size:11px; opacity:.85; margin-top:2px; display:block; }
+  #ios-banner .banner-close {
+    background:none; border:none; color:#fff; font-size:26px;
+    cursor:pointer; padding:0 4px; line-height:1; flex-shrink:0;
+  }
+
+  /* ── Chrome/Android INSTALL BUTTON ── */
+  #install-btn {
+    display:none;
+    margin:0 auto;
+    background:var(--brand); color:#fff;
+    border:none; border-radius:8px;
+    padding:10px 22px;
+    font-size:.85rem; font-weight:600;
+    cursor:pointer; letter-spacing:.04em;
+    box-shadow:var(--shadow);
+    align-items:center; gap:8px;
+    transition:background .15s;
+  }
+  #install-btn:hover { background:var(--brand-dark); }
+  #install-btn svg { width:18px; height:18px; flex-shrink:0; }
+  .install-row {
+    width:100%; max-width:560px;
+    display:flex; justify-content:center;
+    margin-top:4px;
+  }
+
+  /* ── ADD LINK BUTTON ── */
+  .add-link-row {
+    width:100%; max-width:560px;
+    display:flex; justify-content:flex-end;
+    margin-top:18px;
+  }
+  #add-link-btn {
+    display:flex; align-items:center; gap:7px;
+    background:var(--brand); color:#fff;
+    border:none; border-radius:10px;
+    padding:10px 20px;
+    font-size:.82rem; font-weight:700;
+    cursor:pointer; letter-spacing:.05em;
+    box-shadow:var(--shadow);
+    transition:background .15s, transform .12s;
+  }
+  #add-link-btn:hover { background:var(--brand-dark); }
+  #add-link-btn:active { transform:scale(0.97); }
+  #add-link-btn svg { width:16px; height:16px; flex-shrink:0; }
+
+  /* ── MODAL OVERLAY ── */
+  #modal-overlay {
+    display:none;
+    position:fixed; inset:0;
+    background:rgba(30,50,70,0.45);
+    z-index:1000;
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #modal-overlay.open { display:flex; }
+
+  /* ── MODAL CARD ── */
+  .modal {
+    background:var(--white);
+    border-radius:18px;
+    padding:28px 24px 22px;
+    width:100%; max-width:460px;
+    box-shadow:0 8px 40px rgba(44,109,162,0.22);
+    display:flex; flex-direction:column; gap:18px;
+  }
+  .modal-title {
+    font-size:1rem; font-weight:700;
+    color:var(--brand-dark); letter-spacing:.01em;
+  }
+  .modal-field {
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .modal-field label {
+    font-size:.7rem; font-weight:700;
+    letter-spacing:.08em; text-transform:uppercase;
+    color:var(--muted);
+  }
+  .modal-field input {
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    padding:10px 13px;
+    font-size:.88rem; font-family:inherit;
+    color:var(--text);
+    background:var(--surface);
+    outline:none;
+    transition:border-color .15s;
+  }
+  .modal-field input:focus { border-color:var(--brand); background:#fff; }
+  .modal-field input::placeholder { color:#b0bec5; }
+  .modal-actions {
+    display:flex; gap:10px; justify-content:flex-end;
+  }
+  .btn-cancel {
+    background:none; border:1.5px solid var(--border);
+    border-radius:9px; padding:9px 18px;
+    font-size:.82rem; font-weight:600;
+    color:var(--muted); cursor:pointer;
+    font-family:inherit;
+    transition:border-color .15s, color .15s;
+  }
+  .btn-cancel:hover { border-color:var(--brand-light); color:var(--brand); }
+  .btn-save {
+    background:var(--brand); border:none;
+    border-radius:9px; padding:9px 22px;
+    font-size:.82rem; font-weight:700;
+    color:#fff; cursor:pointer;
+    font-family:inherit; letter-spacing:.04em;
+    transition:background .15s;
+  }
+  .btn-save:hover { background:var(--brand-dark); }
+  .modal-error {
+    font-size:.74rem; color:#d32f2f;
+    display:none; margin-top:-8px;
+  }
+
+  /* ── USER CARD wrapper ── */
+  .user-card-wrap {
+    position:relative;
+  }
+  .user-card-wrap .link-card {
+    padding-right:44px;
+  }
+  .delete-btn {
+    position:absolute; top:50%; right:14px;
+    transform:translateY(-50%);
+    background:none; border:none;
+    cursor:pointer; padding:4px;
+    color:#b0bec5; line-height:1;
+    font-size:18px;
+    transition:color .15s;
+    border-radius:6px;
+  }
+  .delete-btn:hover { color:#d32f2f; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header" role="banner">
+  <div class="header-left">
+    <div class="header-left-text">
+      <h1>RRR Tools</h1>
+      <p>Strumenti CGN</p>
+    </div>
+  </div>
+  <div class="header-badge" aria-label="Versione 1.0">v 1.0</div>
+</header>
+
+<!-- MAIN -->
+<main class="main" role="main">
+
+  <p class="section-label" aria-label="Link utili">Link utili</p>
+
+  <div class="link-list" id="link-list" role="list" aria-label="Elenco strumenti">
+
+  </div><!-- /.link-list -->
+
+  <!-- ADD LINK BUTTON -->
+  <div class="add-link-row">
+    <button id="add-link-btn" aria-label="Aggiungi nuovo link">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      Aggiungi link
+    </button>
+  </div>
+
+  <div class="divider" role="separator"></div>
+
+  <div class="install-row">
+    <button id="install-btn" aria-label="Installa RRR Tools come applicazione">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 4v12m0 0l-4-4m4 4l4-4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      Installa RRR Tools
+    </button>
+  </div>
+
+</main>
+
+<footer class="footer" role="contentinfo">
+  <p>© CGN – Tutti i diritti riservati</p>
+  <p>RRR Tools &nbsp;·&nbsp; v 1.0</p>
+</footer>
+
+<!-- MODAL: Aggiungi link -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-label="Aggiungi nuovo link">
+  <div class="modal">
+    <p class="modal-title">Aggiungi un nuovo link</p>
+    <div class="modal-field">
+      <label for="input-title">Titolo</label>
+      <input type="text" id="input-title" placeholder="es. Portale Fiscale" maxlength="80" autocomplete="off">
+    </div>
+    <div class="modal-field">
+      <label for="input-url">Link</label>
+      <input type="url" id="input-url" placeholder="https://esempio.it" maxlength="300" autocomplete="off">
+      <span class="modal-error" id="url-error">Inserisci un URL valido (inizia con http:// o https://)</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel">Annulla</button>
+      <button class="btn-save"   id="modal-save">Salva</button>
+    </div>
+  </div>
+</div>
+
+<div id="ios-banner" role="dialog" aria-label="Installa RRR Tools" style="display:none">
+  <img id="ios-banner-icon" src="" alt="RRR Tools" width="42" height="42">
+  <div class="banner-text">
+    <strong>Installa RRR Tools</strong>
+    <span>Tocca <b>&#8943;</b> poi <b>Aggiungi a schermata Home</b></span>
+  </div>
+  <button class="banner-close" id="ios-banner-close" aria-label="Chiudi">&#215;</button>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── Favicon generator ── */
+  function generateFavicon(size) {
+    var canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#2c6da2";
+    ctx.fillRect(0, 0, size, size);
+    var gridSize = size * 0.62;
+    var innerGap = gridSize * 0.14;
+    var sqSize   = (gridSize - innerGap) / 2;
+    var sqRadius = sqSize * 0.18;
+    var ox       = (size - gridSize) / 2;
+    var oy       = (size - gridSize) / 2;
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    [[0,0],[1,0],[0,1],[1,1]].forEach(function(pos) {
+      var x = ox + pos[0] * (sqSize + innerGap);
+      var y = oy + pos[1] * (sqSize + innerGap);
+      var r = sqRadius;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + sqSize - r, y);
+      ctx.quadraticCurveTo(x + sqSize, y, x + sqSize, y + r);
+      ctx.lineTo(x + sqSize, y + sqSize - r);
+      ctx.quadraticCurveTo(x + sqSize, y + sqSize, x + sqSize - r, y + sqSize);
+      ctx.lineTo(x + r, y + sqSize);
+      ctx.quadraticCurveTo(x, y + sqSize, x, y + sqSize - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    });
+    return canvas.toDataURL("image/png");
+  }
+
+  (function () {
+    var faviconLink = document.getElementById("favicon-link");
+    if (faviconLink) faviconLink.href = generateFavicon(64);
+  })();
+
+  /* ── PWA Icon generator ── */
+  function generateIcon(size, callback) {
+    var canvas = document.createElement("canvas");
+    canvas.width = canvas.height = size;
+    var ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#2c6da2";
+    ctx.fillRect(0, 0, size, size);
+    var logoH_max = size * 0.58;
+    var logoW_max = size * 0.82;
+    var logoH = Math.min(logoH_max, logoW_max);
+    var logoW = logoH;
+    var fontSize = Math.round(size * 0.13);
+    var gap      = size * 0.03;
+    var totalH = logoH + gap + fontSize;
+    var start_y = (size - totalH) / 2;
+    var innerGap = logoH * 0.12;
+    var sqSize   = (logoH - innerGap) / 2;
+    var sqRadius = sqSize * 0.18;
+    var ox       = (size - logoW) / 2;
+    var oy       = start_y;
+    ctx.fillStyle = "rgba(255,255,255,0.90)";
+    [[0,0],[1,0],[0,1],[1,1]].forEach(function(pos) {
+      var x = ox + pos[0] * (sqSize + innerGap);
+      var y = oy + pos[1] * (sqSize + innerGap);
+      var r = sqRadius;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + sqSize - r, y);
+      ctx.quadraticCurveTo(x + sqSize, y, x + sqSize, y + r);
+      ctx.lineTo(x + sqSize, y + sqSize - r);
+      ctx.quadraticCurveTo(x + sqSize, y + sqSize, x + sqSize - r, y + sqSize);
+      ctx.lineTo(x + r, y + sqSize);
+      ctx.quadraticCurveTo(x, y + sqSize, x, y + sqSize - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fill();
+    });
+    ctx.fillStyle    = "#ffffff";
+    ctx.textAlign    = "center";
+    ctx.textBaseline = "top";
+    ctx.font         = "900 " + fontSize + "px Roboto, Arial, sans-serif";
+    ctx.fillText("RRR Tools", size / 2, start_y + logoH + gap);
+    callback(canvas.toDataURL("image/png"));
+  }
+
+  /* ── Boot PWA ── */
+  generateIcon(192, function (icon192) {
+    generateIcon(512, function (icon512) {
+
+      var manifest = {
+        name: "RRR Tools",
+        short_name: "RRR Tools",
+        description: "RRR Tools – Strumenti CGN",
+        start_url: "./",
+        display: "standalone",
+        background_color: "#2c6da2",
+        theme_color: "#2c6da2",
+        orientation: "portrait",
+        icons: [
+          { src: icon192, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: icon512, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+        ]
+      };
+      var mBlob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      var mLink = document.createElement("link");
+      mLink.rel  = "manifest";
+      mLink.href = URL.createObjectURL(mBlob);
+      document.head.appendChild(mLink);
+
+      var appleIcon = document.getElementById("apple-touch-icon-main");
+      if (appleIcon) appleIcon.href = icon192;
+
+      if ("serviceWorker" in navigator) {
+        var sw = [
+          "self.addEventListener('install',function(){self.skipWaiting();});",
+          "self.addEventListener('activate',function(e){e.waitUntil(clients.claim());});",
+          "self.addEventListener('fetch',function(e){",
+          "  e.respondWith(fetch(e.request).catch(function(){return caches.match(e.request);}));",
+          "});"
+        ].join("");
+        navigator.serviceWorker.register(
+          URL.createObjectURL(new Blob([sw], { type: "application/javascript" }))
+        ).catch(function () {});
+      }
+
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      var isStandalone = window.navigator.standalone === true;
+      if (isIOS && !isStandalone && !sessionStorage.getItem("rrr-dismissed")) {
+        var banner    = document.getElementById("ios-banner");
+        var bannerImg = document.getElementById("ios-banner-icon");
+        bannerImg.src = icon192;
+        banner.style.display = "flex";
+        document.getElementById("ios-banner-close").addEventListener("click", function () {
+          banner.style.display = "none";
+          sessionStorage.setItem("rrr-dismissed", "1");
+        });
+      }
+
+      var deferredPrompt;
+      var installBtn = document.getElementById("install-btn");
+      window.addEventListener("beforeinstallprompt", function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = "flex";
+      });
+      installBtn.addEventListener("click", function () {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function () {
+          deferredPrompt = null;
+          installBtn.style.display = "none";
+        });
+      });
+      window.addEventListener("appinstalled", function () {
+        installBtn.style.display = "none";
+      });
+
+    });
+  });
+
+  /* ── ADD / SAVE / DELETE LINK ── */
+  var STORAGE_KEY = "rrr-custom-links";
+  var linkList    = document.getElementById("link-list");
+  var overlay     = document.getElementById("modal-overlay");
+  var inputTitle  = document.getElementById("input-title");
+  var inputUrl    = document.getElementById("input-url");
+  var urlError    = document.getElementById("url-error");
+
+  function loadLinks() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e) { return []; }
+  }
+  function saveLinks(links) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
+  }
+
+  function createCard(item) {
+    var wrap = document.createElement("div");
+    wrap.className = "user-card-wrap";
+    wrap.setAttribute("role", "listitem");
+    wrap.dataset.id = item.id;
+
+    var a = document.createElement("a");
+    a.className = "link-card";
+    a.href      = item.url;
+    a.target    = "_blank";
+    a.rel       = "noopener noreferrer";
+    a.setAttribute("aria-label", "Apri " + item.title);
+
+    var titleSpan = document.createElement("span");
+    titleSpan.className = "link-title";
+    titleSpan.textContent = item.title;
+
+    var meta = document.createElement("span");
+    meta.className = "link-meta";
+
+    var label = document.createElement("span");
+    label.className = "link-label";
+    label.textContent = "Link:";
+
+    var url = document.createElement("span");
+    url.className = "link-url";
+    url.textContent = item.url;
+
+    meta.appendChild(label);
+    meta.appendChild(url);
+    a.appendChild(titleSpan);
+    a.appendChild(meta);
+
+    var del = document.createElement("button");
+    del.className = "delete-btn";
+    del.setAttribute("aria-label", "Elimina " + item.title);
+    del.title = "Elimina";
+    del.innerHTML = "&#215;";
+    del.addEventListener("click", function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var links = loadLinks().filter(function(l){ return l.id !== item.id; });
+      saveLinks(links);
+      wrap.remove();
+    });
+
+    wrap.appendChild(a);
+    wrap.appendChild(del);
+    return wrap;
+  }
+
+  /* Render saved links on load */
+  (function () {
+    var links = loadLinks();
+    links.forEach(function (item) {
+      linkList.appendChild(createCard(item));
+    });
+  })();
+
+  /* Open modal */
+  document.getElementById("add-link-btn").addEventListener("click", function () {
+    inputTitle.value = "";
+    inputUrl.value   = "";
+    urlError.style.display = "none";
+    overlay.classList.add("open");
+    setTimeout(function(){ inputTitle.focus(); }, 80);
+  });
+
+  /* Close modal */
+  function closeModal() { overlay.classList.remove("open"); }
+  document.getElementById("modal-cancel").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+
+  /* Save */
+  document.getElementById("modal-save").addEventListener("click", function () {
+    var title = inputTitle.value.trim();
+    var url   = inputUrl.value.trim();
+    if (!title) { inputTitle.focus(); return; }
+    var isValidUrl = /^https?:\/\/.+/.test(url);
+    if (!isValidUrl) {
+      urlError.style.display = "block";
+      inputUrl.focus();
+      return;
+    }
+    urlError.style.display = "none";
+    var item = { id: Date.now().toString(), title: title, url: url };
+    var links = loadLinks();
+    links.push(item);
+    saveLinks(links);
+    linkList.appendChild(createCard(item));
+    closeModal();
+  });
+
+})();
+</script>
+</body>
+</html>
