@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RRR Tools</title>
+
+<!-- FAVICON CGN -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+  <rect width='100' height='100' rx='18' fill='%232c6da2'/>
+  <rect x='25' y='25' width='20' height='20' fill='white'/>
+  <rect x='55' y='25' width='20' height='20' fill='white'/>
+  <rect x='25' y='55' width='20' height='20' fill='white'/>
+  <rect x='55' y='55' width='20' height='20' fill='white'/>
+</svg>">
+
+<style>
+:root{
+  --brand:#2c6da2;
+  --bg:#f5f8fb;
+  --border:#c5d8ea;
+  --text-gray:#6b6b6b;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+}
+
+.header{
+  background:var(--brand);
+  color:#fff;
+  padding:16px 20px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.main{
+  max-width:750px;
+  margin:auto;
+  padding:16px;
+}
+
+.section-title{
+  font-size:18px;
+  font-weight:700;
+  color:var(--text-gray);
+  margin-bottom:10px;
+  padding:0 12px;
+}
+
+/* CARD */
+.link-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:8px;
+  position:relative;
+  cursor:grab;
+}
+
+.link-title{
+  font-weight:700;
+  color:var(--brand);
+  text-decoration:none;
+  display:block;
+}
+
+.link-url{
+  font-size:12px;
+  color:#666;
+  word-break:break-all;
+}
+
+.actions{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+}
+
+.btn{
+  font-size:11px;
+  padding:5px 8px;
+  border:1px solid var(--border);
+  background:#f8fbff;
+  border-radius:6px;
+}
+
+/* BUTTON AREA */
+.bottom-area{
+  margin-top:8px;
+}
+
+.main-btn{
+  width:100%;
+  background:var(--brand);
+  color:#fff;
+  border:none;
+  padding:12px;
+  border-radius:12px;
+  font-weight:700;
+}
+
+.form{
+  display:none;
+  margin-top:8px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:12px;
+}
+
+.form.show{display:block;}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-bottom:8px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  box-sizing:border-box;
+}
+
+.save-btn{
+  width:100%;
+  background:var(--brand);
+  color:#fff;
+  border:none;
+  padding:10px;
+  border-radius:8px;
+}
+
+/* DRAG VISUAL */
+.sortable-ghost{
+  opacity:0.4;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Link Utili</div>
+
+<div class="main">
+
+<div class="section-title">Link Utili</div>
+
+<div id="list"></div>
+
+<div class="bottom-area">
+  <button class="main-btn" onclick="toggleForm()">Aggiungi Link</button>
+
+  <div class="form" id="form">
+    <input id="title" placeholder="Titolo">
+    <input id="url" placeholder="https://...">
+    <button class="save-btn" onclick="addLink()">Salva</button>
+  </div>
+</div>
+
+</div>
+
+<!-- ✅ SORTABLEJS (DRAG MOBILE FIX) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAiwYRo8R61WefbiIk1AKmlYnM_HNl51M8",
+  authDomain: "link-utili.firebaseapp.com",
+  projectId: "link-utili",
+  storageBucket: "link-utili.firebasestorage.app",
+  messagingSenderId: "920848158405",
+  appId: "1:920848158405:web:7636be9b2a20285228aaac"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const list = document.getElementById("list");
+const form = document.getElementById("form");
+
+let sortable;
+
+/* REALTIME */
+onSnapshot(collection(db,"links"), snap=>{
+  let data=[];
+  snap.forEach(d=>data.push({id:d.id,...d.data()}));
+
+  list.innerHTML="";
+  data.sort((a,b)=>(a.order||0)-(b.order||0));
+
+  data.forEach(i=>{
+    const div=document.createElement("div");
+    div.className="link-card";
+    div.dataset.id=i.id;
+
+    div.innerHTML=`
+      <a class="link-title" href="${i.url}" target="_blank">${i.title}</a>
+      <div class="link-url">${i.url}</div>
+    `;
+
+    list.appendChild(div);
+  });
+
+  initDrag();
+});
+
+/* SORTABLE INIT (MOBILE + DESKTOP) */
+function initDrag(){
+  if(sortable) sortable.destroy();
+
+  sortable = new Sortable(list,{
+    animation:150,
+    ghostClass:"sortable-ghost",
+    onEnd:saveOrder
+  });
+}
+
+/* SAVE ORDER */
+async function saveOrder(){
+  const cards=document.querySelectorAll(".link-card");
+  let i=0;
+
+  for(const c of cards){
+    await updateDoc(doc(db,"links",c.dataset.id),{
+      order:i++
+    });
+  }
+}
+
+/* ADD */
+window.addLink=async()=>{
+  await addDoc(collection(db,"links"),{
+    title:title.value,
+    url:url.value,
+    order:Date.now()
+  });
+
+  title.value="";
+  url.value="";
+  form.classList.remove("show");
+};
+
+window.toggleForm=()=>{
+  form.classList.toggle("show");
+};
+
+</script>
+
+</body>
+</html>
